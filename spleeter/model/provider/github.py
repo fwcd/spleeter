@@ -114,7 +114,7 @@ class GithubModelProvider(ModelProvider):
                 self.CHECKSUM_INDEX,
             )
         )
-        response: httpx.Response = httpx.get(url)
+        response: httpx.Response = httpx.get(url, follow_redirects=True)
         response.raise_for_status()
         index: Dict = response.json()
         if name not in index:
@@ -136,7 +136,7 @@ class GithubModelProvider(ModelProvider):
         )
         url = f"{url}.tar.gz"
         logger.info(f"Downloading model archive {url}")
-        with httpx.Client(http2=True) as client:
+        with httpx.Client(http2=True, follow_redirects=True) as client:
             with client.stream("GET", url) as response:
                 response.raise_for_status()
                 archive = NamedTemporaryFile(delete=False)
